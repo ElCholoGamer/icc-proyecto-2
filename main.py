@@ -5,6 +5,10 @@ import math
 import cv2
 
 
+def most_frequent(nums: list[int]) -> int | None:
+    return max(nums, key=lambda n: nums.count(n))
+
+
 def print_image(image: list[list[int]]):
     for row in img_small:
         for value in row:
@@ -28,10 +32,8 @@ print_image(img_small)
 
 digits = load_digits()
 
-print(digits.data)
 
-
-distances = []
+distance_info = []
 
 for data_index in range(0, len(digits.data)):
     distance = 0
@@ -40,7 +42,11 @@ for data_index in range(0, len(digits.data)):
         distance += (digits.data[data_index][i] - img_flat[i]) ** 2
 
     distance = math.sqrt(distance)
-    distances.append((distance, digits.target[data_index]))
 
-distances.sort()
-print(distances[:3])
+    distance_info.append((distance, digits.target[data_index]))
+
+distance_info.sort()
+
+targets_ordered = [distance[1] for distance in distance_info]
+
+print(most_frequent(targets_ordered[:3]))
