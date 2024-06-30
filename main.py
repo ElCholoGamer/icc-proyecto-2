@@ -29,7 +29,6 @@ print()
 
 # image_path = input('Ingrese la imagen a reconocer: ')
 image_path = 'datasets/five.jpeg'
-
 image = image_utils.read_image_scaled(image_path)
 
 print('Imagen a reconocer:')
@@ -37,6 +36,7 @@ image_utils.print_image(image)
 print()
 
 image_flat = image_utils.flatten(image)
+
 distance_results = [(distance(data, image_flat), target)
                     for _, data, target in digits_zip]
 
@@ -46,13 +46,20 @@ nearest_targets = [e[1] for e in distance_results[:3]]
 prediction = frequency_utils.most_frequent(nearest_targets)
 
 if prediction == None:
-    print('ay cabron')
-else:
-    print(
-        'Soy la inteligencia artificial,',
-        'y he detectado que el dígito ingresado',
-        f'corresponde al número {prediction}'
-    )
+    for t in range(3, 11):
+        next_nearest_target = distance_results[t][1]
+
+        if next_nearest_target in nearest_targets:
+            prediction = next_nearest_target
+            break
+
+        nearest_targets.append(next_nearest_target)
+
+print(
+    'Soy la inteligencia artificial,',
+    'y he detectado que el dígito ingresado',
+    f'corresponde al número {prediction}.'
+)
 
 print()
 
@@ -61,11 +68,10 @@ distances_to_avgs = [
     distance(image_utils.flatten(avg), image_flat) for avg in averages
 ]
 
-print(distances_to_avgs)
 prediction_2 = distances_to_avgs.index(min(distances_to_avgs))
 
 print(
-    'Soy la inteligencia artificial versión 2, ',
-    'y he detectado que el dígito ingresado ',
-    f'corresponde al número {prediction_2}'
+    'Soy la inteligencia artificial versión 2,',
+    'y he detectado que el dígito ingresado',
+    f'corresponde al número {prediction_2}.'
 )
