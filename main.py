@@ -1,52 +1,71 @@
-from sklearn.datasets import load_digits
-from colorist.constants.ansi import RESET_ALL
-from colorist import BgColorRGB
+from sklearn import datasets
+import image_utils
+import frequency_utils
 import math
-import cv2
 
 
-def most_frequent(nums: list[int]) -> int | None:
-    return max(nums, key=lambda n: nums.count(n))
+def distance(vec_a: list[int], vec_b: list[int]) -> float:
+    square_sum = 0
+
+    for a, b in zip(vec_a, vec_b):
+        square_sum += (a - b) ** 2
+
+    return math.sqrt(square_sum)
 
 
-def print_image(image: list[list[int]]):
-    for row in img_small:
-        for value in row:
-            scaled_value = math.floor((255 / 16) * value)
-            color_code = BgColorRGB(
-                255 - scaled_value, 255, 255 - scaled_value)
-            print(f'{color_code}  ', end='')
+digits = datasets.load_digits()
 
-        print(RESET_ALL)
+digits_zip = list(zip(digits.images, digits.data, digits.target))
+
+averages = [image_utils.target_average(digits_zip, i) for i in range(0, 10)]
+
+for i, average in enumerate(averages):
+    print(f'Promedio de {i}:')
+    image_utils.print_image(average)
+    print()
+
+print('=' * 42)
+print()
+
+# image_path = input('Ingrese la imagen a reconocer: ')
+image_path = 'datasets/five.jpeg'
+
+image = image_utils.read_image_scaled(image_path)
+
+print('Imagen a reconocer:')
+image_utils.print_image(image)
+print()
+
+image_flat = image_utils.flatten(image)
+distance_results = [(distance(data, image_flat), target)
+                    for _, data, target in digits_zip]
+
+distance_results.sort()
+nearest_targets = [e[1] for e in distance_results[:3]]
+
+prediction = frequency_utils.most_frequent(nearest_targets)
+
+if prediction == None:
+    print('ay cabron')
+else:
+    print(
+        'Soy la inteligencia artificial,',
+        'y he detectado que el dígito ingresado',
+        f'corresponde al número {prediction}'
+    )
+
+print()
 
 
-img = cv2.imread('datasets/five.jpeg', cv2.IMREAD_GRAYSCALE)
-img_small = cv2.resize(img, (8, 8))
+distances_to_avgs = [
+    distance(image_utils.flatten(avg), image_flat) for avg in averages
+]
 
-img_small = [[math.floor((16 / 255) * (255 - pixel))
-              for pixel in row] for row in img_small]
+print(distances_to_avgs)
+prediction_2 = distances_to_avgs.index(min(distances_to_avgs))
 
-img_flat = [x for row in img_small for x in row]
-
-print_image(img_small)
-
-digits = load_digits()
-
-
-distance_info = []
-
-for data_index in range(0, len(digits.data)):
-    distance = 0
-
-    for i in range(0, len(digits.data[data_index])):
-        distance += (digits.data[data_index][i] - img_flat[i]) ** 2
-
-    distance = math.sqrt(distance)
-
-    distance_info.append((distance, digits.target[data_index]))
-
-distance_info.sort()
-
-targets_ordered = [distance[1] for distance in distance_info]
-
-print(most_frequent(targets_ordered[:3]))
+print(
+    'Soy la inteligencia artificial versión 2, ',
+    'y he detectado que el dígito ingresado ',
+    f'corresponde al número {prediction_2}'
+)
