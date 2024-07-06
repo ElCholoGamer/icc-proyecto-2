@@ -14,7 +14,6 @@ def distance(vec_a: list[int], vec_b: list[int]) -> float:
 
 
 digits = datasets.load_digits()
-
 digits_zip = list(zip(digits.images, digits.data, digits.target))
 
 averages = [image_utils.target_average(digits_zip, i) for i in range(0, 10)]
@@ -27,8 +26,7 @@ for i, average in enumerate(averages):
 print('=' * 42)
 print()
 
-# image_path = input('Ingrese la imagen a reconocer: ')
-image_path = 'datasets/five.jpeg'
+image_path = input('Ingrese la imagen a reconocer: ')
 image = image_utils.read_image_scaled(image_path)
 
 print('Imagen a reconocer:')
