@@ -5,12 +5,7 @@ import math
 
 
 def distance(vec_a: list[int], vec_b: list[int]) -> float:
-    square_sum = 0
-
-    for a, b in zip(vec_a, vec_b):
-        square_sum += (a - b) ** 2
-
-    return math.sqrt(square_sum)
+    return math.sqrt(sum([(a - b) ** 2 for a, b in zip(vec_a, vec_b)]))
 
 
 digits = datasets.load_digits()
@@ -34,7 +29,6 @@ image_utils.print_image(image)
 print()
 
 image_flat = image_utils.flatten(image)
-
 distance_results = [(distance(data, image_flat), target)
                     for _, data, target in digits_zip]
 
