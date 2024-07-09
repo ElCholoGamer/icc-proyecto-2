@@ -9,7 +9,7 @@ def distance(vec_a: list[int], vec_b: list[int]) -> float:
 
 
 digits = datasets.load_digits()
-digits_zip = list(zip(digits.images, digits.data, digits.target))
+digits_zip = list(zip(digits['images'], digits['data'], digits['target']))
 
 averages = [image_utils.target_average(digits_zip, i) for i in range(0, 10)]
 
@@ -34,6 +34,9 @@ distance_results = [(distance(data, image_flat), target)
 
 distance_results.sort()
 nearest_targets = [e[1] for e in distance_results[:3]]
+
+print('Targets más cercanos: ', [int(target) for target in nearest_targets])
+print()
 
 prediction = frequency_utils.most_frequent(nearest_targets)
 

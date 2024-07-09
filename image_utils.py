@@ -20,7 +20,7 @@ def flatten(matrix: list[list[int]]) -> list[int]:
 
 
 def rescale_pixel(pixel: int) -> int:
-    return math.floor((16 / 255) * (255 - pixel))
+    return round((16 / 255) * (255 - pixel))
 
 
 def read_image_scaled(file_path: str) -> list[list[int]]:
